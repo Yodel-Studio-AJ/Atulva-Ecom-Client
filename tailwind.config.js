@@ -15,6 +15,9 @@ export default {
       },
       fontFamily: {
         sans: ['Work Sans', 'sans-serif'],
+      },
+      maxWidth: {
+        '8xl': '1440px',
       }
     },
   },
