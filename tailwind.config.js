@@ -15,6 +15,7 @@ export default {
       },
       fontFamily: {
         sans: ['Work Sans', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       maxWidth: {
         '8xl': '1440px',

@@ -7,26 +7,28 @@ import HomePromoBento from "@/components/landing/HomePromoBento";
 import PopularSection from "@/components/landing/PopularSection";
 import QuickAccessCategories from "@/components/landing/QuickAccessCategories";
 import SpotlightSection from "@/components/landing/SpotlightSection";
+import BestSellers from "@/components/landing/BestSellers";
 import useLandingPageStore from '../stores/landingPageStore';
 
 const LandingPage = () => {
-    const { fetchHeroBanners } = useLandingPageStore();
+    const { fetchHeroBanners, fetchFeaturedProducts, featuredProducts, isFeaturedProductsLoading } = useLandingPageStore();
 
     useEffect(() => {
         fetchHeroBanners();
-    }, [fetchHeroBanners]);
+        fetchFeaturedProducts();
+    }, [fetchHeroBanners, fetchFeaturedProducts]);
 
     return (
         <div className="flex flex-col p-6">
             {/* <Header /> */}
             <HeroSection />
             <QuickAccessCategories />
-            <HomePromoBento />
+            {/* <HomePromoBento /> */}
+            <BestSellers products={featuredProducts} isLoading={isFeaturedProductsLoading} />
             <PopularSection />
             <SpotlightSection />
             <PressBanner />
             <ClientTestimonialsSection />
-            LandingPage
         </div>
     )
 }
