@@ -19,11 +19,11 @@ const LandingPage = () => {
     }, [fetchHeroBanners, fetchFeaturedProducts]);
 
     return (
-        <div className="flex flex-col p-6">
+        <div className="flex flex-col">
             {/* <Header /> */}
             <HeroSection />
             <QuickAccessCategories />
-            {/* <HomePromoBento /> */}
+            <HomePromoBento />
             <BestSellers products={featuredProducts} isLoading={isFeaturedProductsLoading} />
             <PopularSection />
             <SpotlightSection />

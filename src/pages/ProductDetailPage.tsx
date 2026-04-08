@@ -3,16 +3,23 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getProductBySlug, getSimilarProducts } from '@/apis/landingPageApi';
 import type { Product } from '@/types/landing';
 import BestSellerProductCard from '@/components/landing/BestSellerProductCard';
+import useCustomerStore from '@/stores/customerStore';
+import useCartStore from '@/stores/cartStore';
+import LoginPromptModal from '@/components/basic/LoginPromptModal';
 
 export default function ProductDetailPage() {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
+
+    const { customer } = useCustomerStore();
+    const { cart, addItem, updateItem, removeItem, isLoading: cartLoading } = useCartStore();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [similar, setSimilar] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState('');
     const [activeTab, setActiveTab] = useState<'details' | 'ingredients' | 'nutrition'>('details');
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
         if (!slug) return;
@@ -48,6 +55,20 @@ export default function ProductDetailPage() {
         );
     }
 
+    const cartItem = cart?.items.find((i) => i.product_id === product?.id);
+    const quantity = cartItem?.quantity ?? 0;
+
+    const handleAddToCart = () => {
+        if (!customer) { setShowLoginModal(true); return; }
+        addItem(product!.id);
+    };
+
+    const handleIncrease = () => updateItem(product!.id, quantity + 1);
+    const handleDecrease = () => {
+        if (quantity <= 1) removeItem(product!.id);
+        else updateItem(product!.id, quantity - 1);
+    };
+
     const allImages = [
         product.primary_image,
         ...(product.secondary_image ? [product.secondary_image] : []),
@@ -60,6 +81,12 @@ export default function ProductDetailPage() {
 
     return (
         <div className="min-h-screen bg-white font-poppins">
+            {showLoginModal && (
+                <LoginPromptModal
+                    onClose={() => setShowLoginModal(false)}
+                    redirectAfter={`/product/${slug}`}
+                />
+            )}
             <div className="max-w-7xl mx-auto px-6 py-10">
 
                 {/* Breadcrumb */}
@@ -161,12 +188,33 @@ export default function ProductDetailPage() {
 
                         {/* CTA */}
                         <div className="flex gap-3 mb-8">
-                            <button
-                                disabled={!inStock}
-                                className="flex-1 py-3.5 bg-black text-white text-sm font-semibold font-poppins rounded-xl tracking-wide hover:bg-neutral-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                                Add to Cart
-                            </button>
+                            {quantity > 0 ? (
+                                <div className="flex-1 flex items-center justify-between bg-black text-white rounded-xl overflow-hidden h-[52px]">
+                                    <button
+                                        onClick={handleDecrease}
+                                        disabled={cartLoading}
+                                        className="w-14 h-full flex items-center justify-center text-2xl leading-none hover:bg-white/10 transition-colors disabled:opacity-50"
+                                    >
+                                        −
+                                    </button>
+                                    <span className="text-base font-semibold">{quantity}</span>
+                                    <button
+                                        onClick={handleIncrease}
+                                        disabled={cartLoading}
+                                        className="w-14 h-full flex items-center justify-center text-2xl leading-none hover:bg-white/10 transition-colors disabled:opacity-50"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={!inStock || cartLoading}
+                                    className="flex-1 py-3.5 bg-black text-white text-sm font-semibold font-poppins rounded-xl tracking-wide hover:bg-neutral-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    Add to Cart
+                                </button>
+                            )}
                             {product.amazon_link && (
                                 <a
                                     href={product.amazon_link}

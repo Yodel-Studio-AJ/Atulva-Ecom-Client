@@ -40,6 +40,86 @@ export const getProductBySlug = async (slug: string): Promise<ApiResponse<Produc
     }
 };
 
+export interface SpotlightItem {
+    id: number;
+    image_url: string;
+    quote: string;
+    person_name: string;
+    bg_color: string;
+    sort_order: number;
+    is_active: boolean;
+}
+
+export const getSpotlights = async (): Promise<ApiResponse<SpotlightItem[]>> => {
+    const response = await apiClient.get<ApiResponse<SpotlightItem[]>>('/public/spotlights');
+    return response.data;
+};
+
+export interface PopularSectionProduct {
+    id: number;
+    name: string;
+    slug: string;
+    primary_image: string;
+    secondary_image?: string;
+    price: string;
+    discounted_price?: string;
+}
+
+export interface PopularSectionItem {
+    id: number;
+    category: string;
+    title: string;
+    subtitle?: string;
+    cta_text: string;
+    cta_url: string;
+    product_1: PopularSectionProduct | null;
+    product_2: PopularSectionProduct | null;
+    sort_order: number;
+    is_active: boolean;
+}
+
+export const getPopularSections = async (): Promise<ApiResponse<PopularSectionItem[]>> => {
+    const response = await apiClient.get<ApiResponse<PopularSectionItem[]>>('/public/popular-sections');
+    return response.data;
+};
+
+export interface ProductQueryParams {
+    search?: string;
+    category?: string;
+    sub_category?: string;
+    brand?: string;
+    min_price?: number;
+    max_price?: number;
+    tags?: string[];
+    sort?: 'newest' | 'price_asc' | 'price_desc' | 'popular';
+    limit?: number;
+    offset?: number;
+}
+
+export interface ProductsResponse {
+    success: boolean;
+    data?: Product[];
+    total?: number;
+    limit?: number;
+    offset?: number;
+}
+
+export const getProducts = async (params: ProductQueryParams = {}): Promise<ProductsResponse> => {
+    const query = new URLSearchParams();
+    if (params.search)      query.set('search', params.search);
+    if (params.category)    query.set('category', params.category);
+    if (params.sub_category) query.set('sub_category', params.sub_category);
+    if (params.brand)       query.set('brand', params.brand);
+    if (params.min_price !== undefined) query.set('min_price', String(params.min_price));
+    if (params.max_price !== undefined) query.set('max_price', String(params.max_price));
+    if (params.tags?.length) query.set('tags', params.tags.join(','));
+    if (params.sort)        query.set('sort', params.sort);
+    if (params.limit !== undefined) query.set('limit', String(params.limit));
+    if (params.offset !== undefined) query.set('offset', String(params.offset));
+    const response = await apiClient.get<ProductsResponse>(`/public/products?${query.toString()}`);
+    return response.data;
+};
+
 export const getSimilarProducts = async (params: {
     category: string;
     sub_category?: string;

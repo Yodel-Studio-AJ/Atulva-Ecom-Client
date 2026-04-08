@@ -1,57 +1,42 @@
-"use client"
-
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { getSpotlights } from "@/apis/landingPageApi"
+import type { SpotlightItem } from "@/apis/landingPageApi"
 
-type ImageItem = {
-    type: "image"
-    src: string
-}
-
-type TextItem = {
-    type: "text"
-    text: string
-    name: string
-    bg: string
-}
-
-type SpotlightItem = ImageItem | TextItem
-
-const spotlightImages = [
-    "/images/jam-oranges.png",
-    "/images/jam-apples.png",
-]
-
-const spotlightTestimonials = [
-    {
-        text:
-            "Honestly, this is sunshine in a jar. It's rare to find actual fruit pieces, and the taste is perfectly balanced — not too sweet, not too tart.",
-        name: "Jamie L.",
-        bg: "bg-[#3B0E0E]",
-    },
-    {
-        text:
-            "This jam tastes like actual fruit rather than just sugar. The texture is perfect — thick, bright, and delightfully tart.",
-        name: "Sophie K.",
-        bg: "bg-red-500",
-    },
-]
+type ScrollCard =
+    | { type: "image"; src: string }
+    | { type: "text"; quote: string; person_name: string; bg_color: string }
 
 export default function SpotlightSection() {
-    // Build alternating list
-    const combined: SpotlightItem[] = [
-        { type: "image", src: spotlightImages[0] },
-        { type: "text", ...spotlightTestimonials[0] },
-        { type: "image", src: spotlightImages[1] },
-        { type: "text", ...spotlightTestimonials[1] },
-    ]
+    const [spotlights, setSpotlights] = useState<SpotlightItem[]>([])
 
-    // Duplicate for seamless loop
-    const infiniteList = [...combined, ...combined]
+    useEffect(() => {
+        getSpotlights().then(res => {
+            if (res.success && res.data?.length) setSpotlights(res.data)
+        })
+    }, [])
+
+    // Each spotlight expands to an image card + a text card (alternating layout)
+    const combined: ScrollCard[] = spotlights.flatMap(s => [
+        { type: "image", src: s.image_url },
+        { type: "text", quote: s.quote, person_name: s.person_name, bg_color: s.bg_color },
+    ])
+
+    console.log(combined);
+
+    // Need at least enough cards to fill the viewport — duplicate until we have 8+
+    const padded = combined.length === 0 ? [] :
+        combined.length < 8 ? [...combined, ...combined, ...combined] : combined
+
+    // Duplicate for seamless infinite loop
+    const infiniteList = [...padded, ...padded]
+
+    if (combined.length === 0) return null
 
     return (
         <section className="py-12 overflow-hidden bg-white">
             <div className="max-w-7xl mx-auto px-4 py-8 overflow-hidden">
-                <div className="flex gap-4 items-center  mb-8">
+                <div className="flex gap-4 items-center mb-8">
                     <h2 className="text-6xl font-bold text-[#866B00]">Spotlight</h2>
                     <img src="/images/hand-sign.png" alt="Hand" className="h-24" />
                 </div>
@@ -60,7 +45,7 @@ export default function SpotlightSection() {
                     className="flex gap-6"
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
-                        duration: 40, // VERY slow
+                        duration: 40,
                         ease: "linear",
                         repeat: Infinity,
                     }}
@@ -84,12 +69,11 @@ export default function SpotlightSection() {
                         return (
                             <div
                                 key={i}
-                                className={` mb-10 w-[280px] h-[240px] rounded-3xl p-5 text-white flex flex-col justify-between flex-shrink-0 ${item.bg}`}
+                                className="mb-10 w-[280px] h-[240px] rounded-3xl p-5 text-white flex flex-col justify-between flex-shrink-0"
+                                style={{ backgroundColor: item.bg_color }}
                             >
-                                <p className="text-sm leading-relaxed">{item.text}</p>
-                                <p className="text-sm font-semibold mt-4">
-                                    — {item.name}
-                                </p>
+                                <p className="text-sm leading-relaxed">"{item.quote}"</p>
+                                <p className="text-sm font-semibold">— {item.person_name}</p>
                             </div>
                         )
                     })}
