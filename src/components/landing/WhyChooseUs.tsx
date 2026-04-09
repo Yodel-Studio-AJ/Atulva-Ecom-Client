@@ -4,15 +4,15 @@ const features = [
         title: "More Fruit\nLess Filler",
     },
     {
-        iconSrc: "",
+        iconSrc: "https://res.cloudinary.com/ddkuoffft/image/upload/q_auto/f_auto/v1775674404/Longer_Fresh_1_dzpo7b.png",
         title: "Longer Freshness\nZero Waste",
     },
     {
-        iconSrc: "",
+        iconSrc: "https://res.cloudinary.com/ddkuoffft/image/upload/q_auto/f_auto/v1775674404/People_Choice_1_yuiyhg.png",
         title: "People's Choice",
     },
     {
-        iconSrc: "",
+        iconSrc: "https://res.cloudinary.com/ddkuoffft/image/upload/q_auto/f_auto/v1775674403/More_Value_1_o7eh6l.png",
         title: "More Value In\nEvery Jar",
     },
 ];
@@ -21,7 +21,7 @@ export default function WhyChooseUs() {
     return (
         <section className="w-full bg-[#f5f5f5] py-12 font-poppins">
             <div className="max-w-6xl mx-auto px-4 text-center">
-                <h2 className="text-3xl md:text-4xl font-semibold mb-10 font-serif">
+                <h2 className="text-3xl md:text-4xl mb-10" style={{ fontFamily: "'Just Another Hand', cursive" }}>
                     Why Thousands Choose Us
                 </h2>
 
@@ -35,7 +35,7 @@ export default function WhyChooseUs() {
                                 <img
                                     src={item.iconSrc}
                                     alt={item.title}
-                                    className="w-[60px] h-[60px] object-contain mb-4"
+                                    className="w-[280px] h-[240px] object-contain mb-4"
                                 />
                             )}
                             <p className="whitespace-pre-line text-sm md:text-base font-medium">

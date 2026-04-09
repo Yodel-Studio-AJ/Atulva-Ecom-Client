@@ -3,34 +3,117 @@ import { useNavigate, Link } from 'react-router-dom';
 import useCartStore from '../stores/cartStore';
 import useCustomerStore from '../stores/customerStore';
 import { getAddresses } from '../apis/customerApi';
+import { initiateOrder, verifyOrder } from '../apis/orderApi';
 import type { Address } from '../types/customer';
+
+// Razorpay global type
+declare global {
+    interface Window {
+        Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+    }
+}
+interface RazorpayOptions {
+    key: string;
+    amount: number;
+    currency: string;
+    name: string;
+    description?: string;
+    order_id: string;
+    prefill?: { name?: string; email?: string; contact?: string };
+    theme?: { color?: string };
+    handler: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
+    modal?: { ondismiss?: () => void };
+}
+interface RazorpayInstance { open(): void; }
+
+const loadRazorpay = () =>
+    new Promise<boolean>((resolve) => {
+        if (window.Razorpay) { resolve(true); return; }
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
     const { customer } = useCustomerStore();
-    const { cart, fetchCart } = useCartStore();
+    const { cart, fetchCart, clearItems } = useCartStore();
 
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [loadingAddr, setLoadingAddr] = useState(true);
+    const [placing, setPlacing] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (!customer) { navigate('/login'); return; }
         if (!cart) fetchCart();
         setLoadingAddr(true);
-        getAddresses()
-            .then((res) => {
-                if (res.success) {
-                    setAddresses(res.data);
-                    const def = res.data.find((a) => a.is_default);
-                    if (def) setSelectedId(def.id);
-                    else if (res.data.length > 0) setSelectedId(res.data[0].id);
-                }
-            })
-            .finally(() => setLoadingAddr(false));
+        getAddresses().then((res) => {
+            if (res.success) {
+                setAddresses(res.data);
+                const def = res.data.find((a) => a.is_default);
+                if (def) setSelectedId(def.id);
+                else if (res.data.length > 0) setSelectedId(res.data[0].id);
+            }
+        }).finally(() => setLoadingAddr(false));
     }, [customer]);
 
-    const fmt = (n: number) => `₹${n.toFixed(2)}`;
+    const fmt = (n: number | string) => `₹${Number(n).toFixed(2)}`;
+
+    const handlePayOnline = async () => {
+        if (!selectedId || !cart) return;
+        setError('');
+        setPlacing(true);
+
+        try {
+            const loaded = await loadRazorpay();
+            if (!loaded) throw new Error('Payment gateway failed to load. Please refresh and try again.');
+
+            const res = await initiateOrder(selectedId);
+            const { razorpay_order_id, amount, currency, key_id } = res.data;
+
+            await new Promise<void>((resolve, reject) => {
+                const rzp = new window.Razorpay({
+                    key: key_id,
+                    amount: Math.round(amount * 100),
+                    currency,
+                    name: 'Altuva',
+                    description: 'Order Payment',
+                    order_id: razorpay_order_id,
+                    prefill: {
+                        name: customer?.name,
+                        email: customer?.email,
+                        contact: customer?.phone || '',
+                    },
+                    theme: { color: '#111827' },
+                    handler: async (response) => {
+                        try {
+                            const orderRes = await verifyOrder({
+                                address_id: selectedId,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                            });
+                            await clearItems();
+                            navigate(`/order-confirmation/${orderRes.data.id}`);
+                            resolve();
+                        } catch (err) {
+                            reject(err);
+                        }
+                    },
+                    modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
+                });
+                rzp.open();
+            });
+        } catch (e) {
+            setError(e instanceof Error ? e.message : 'Payment failed');
+        } finally {
+            setPlacing(false);
+        }
+    };
 
     if (!cart || cart.items.length === 0) {
         return (
@@ -43,7 +126,10 @@ const CheckoutPage = () => {
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-8 font-poppins">
-            <button onClick={() => navigate('/cart')} className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-900 mb-6 transition-colors">
+            <button
+                onClick={() => navigate('/cart')}
+                className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-900 mb-6 transition-colors"
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
@@ -52,8 +138,14 @@ const CheckoutPage = () => {
 
             <h1 className="text-2xl font-bold text-gray-900 mb-8">Checkout</h1>
 
-            <div className="flex flex-col lg:flex-row gap-8">
+            {error && (
+                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center justify-between">
+                    <span>{error}</span>
+                    <button onClick={() => setError('')} className="text-red-400 hover:text-red-600 ml-4">✕</button>
+                </div>
+            )}
 
+            <div className="flex flex-col lg:flex-row gap-8">
                 {/* Address selection */}
                 <div className="flex-1">
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Delivery Address</h2>
@@ -61,7 +153,6 @@ const CheckoutPage = () => {
                     {loadingAddr ? (
                         <p className="text-sm text-gray-400">Loading addresses...</p>
                     ) : addresses.length === 0 ? (
-                        /* ── No addresses ── */
                         <div className="flex flex-col items-center justify-center text-center gap-4 p-8 border-2 border-dashed border-gray-200 rounded-2xl">
                             <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +162,7 @@ const CheckoutPage = () => {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-gray-800 mb-1">No saved addresses</p>
-                                <p className="text-xs text-gray-400 mb-4">Add a delivery address to continue with checkout.</p>
+                                <p className="text-xs text-gray-400 mb-4">Add a delivery address to continue.</p>
                                 <Link
                                     to="/profile"
                                     state={{ scrollToAddresses: true }}
@@ -82,7 +173,6 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                     ) : (
-                        /* ── Address list ── */
                         <div className="space-y-3">
                             {addresses.map((addr) => (
                                 <label
@@ -114,7 +204,6 @@ const CheckoutPage = () => {
                                     </div>
                                 </label>
                             ))}
-
                             <Link
                                 to="/profile"
                                 state={{ scrollToAddresses: true }}
@@ -126,7 +215,7 @@ const CheckoutPage = () => {
                     )}
                 </div>
 
-                {/* Order summary */}
+                {/* Order summary + payment */}
                 <div className="lg:w-80 space-y-4">
                     <div className="p-5 border border-gray-100 rounded-xl space-y-3">
                         <p className="text-sm font-semibold text-gray-900 mb-1">Order Summary</p>
@@ -148,8 +237,7 @@ const CheckoutPage = () => {
 
                         <div className="space-y-1.5 text-sm">
                             <div className="flex justify-between text-gray-500">
-                                <span>Subtotal</span>
-                                <span>{fmt(cart.total_before_discount)}</span>
+                                <span>Subtotal</span><span>{fmt(cart.total_before_discount)}</span>
                             </div>
                             {cart.discount && (
                                 <div className="flex justify-between text-green-600">
@@ -159,8 +247,7 @@ const CheckoutPage = () => {
                             )}
                             {cart.tax_breakdown.map((tax) => (
                                 <div key={tax.id} className="flex justify-between text-gray-400 text-xs">
-                                    <span>{tax.name}</span>
-                                    <span>{fmt(tax.amount)}</span>
+                                    <span>{tax.name}</span><span>{fmt(tax.amount)}</span>
                                 </div>
                             ))}
                             <div className="flex justify-between text-gray-500">
@@ -172,15 +259,25 @@ const CheckoutPage = () => {
                         <hr className="border-gray-100" />
 
                         <div className="flex justify-between text-base font-bold text-gray-900">
-                            <span>Total</span>
-                            <span>{fmt(cart.grand_total)}</span>
+                            <span>Total</span><span>{fmt(cart.grand_total)}</span>
                         </div>
 
                         <button
-                            disabled={addresses.length === 0 || !selectedId}
-                            className="w-full bg-gray-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors mt-1"
+                            onClick={handlePayOnline}
+                            disabled={addresses.length === 0 || !selectedId || placing}
+                            className="w-full bg-gray-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors mt-1 flex items-center justify-center gap-2"
                         >
-                            Place Order
+                            {placing ? (
+                                <>
+                                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                    Processing...
+                                </>
+                            ) : (
+                                'Pay Online'
+                            )}
                         </button>
 
                         {addresses.length === 0 && (
