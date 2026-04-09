@@ -9,6 +9,7 @@ import QuickAccessCategories from "@/components/landing/QuickAccessCategories";
 import SpotlightSection from "@/components/landing/SpotlightSection";
 import BestSellers from "@/components/landing/BestSellers";
 import useLandingPageStore from '../stores/landingPageStore';
+import WhyChooseUs from '@/components/landing/WhyChooseUs';
 
 const LandingPage = () => {
     const { fetchHeroBanners, fetchFeaturedProducts, featuredProducts, isFeaturedProductsLoading } = useLandingPageStore();
@@ -23,6 +24,7 @@ const LandingPage = () => {
             {/* <Header /> */}
             <HeroSection />
             <QuickAccessCategories />
+            <WhyChooseUs />
             <HomePromoBento />
             <BestSellers products={featuredProducts} isLoading={isFeaturedProductsLoading} />
             <PopularSection />

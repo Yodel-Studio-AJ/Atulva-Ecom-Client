@@ -1,6 +1,4 @@
-import type { Slide } from "@/components/landing/carousel/CarouselSlide";
-
-export const heroCarouselData: Slide[] = [
+export const heroCarouselData = [
     {
         id: 1,
         title: "PURE FRUITY BLISS",

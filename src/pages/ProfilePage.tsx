@@ -74,7 +74,7 @@ const ProfilePage = () => {
             if (editingAddr) {
                 await updateAddress(editingAddr.id, addrForm);
             } else {
-                await addAddress(addrForm);
+                await addAddress({ ...addrForm, is_default: false });
             }
             setShowAddrForm(false);
             await loadAddresses();

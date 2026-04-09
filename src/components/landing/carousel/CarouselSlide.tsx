@@ -1,4 +1,5 @@
 
+import { useNavigate } from "react-router-dom";
 import type { HeroBanner } from "@/types/landing";
 import { renderTextWithLineBreaks } from "@/utils/textHelpers";
 
@@ -8,7 +9,17 @@ interface Props {
 }
 
 export default function CarouselSlide({ slide, isActive }: Props) {
-    // const { openForm } = useLead();
+    const navigate = useNavigate();
+
+    const handleCta = () => {
+        if (!slide.cta_button_url) return;
+        if (slide.cta_button_url.startsWith('http')) {
+            window.open(slide.cta_button_url, '_blank', 'noopener noreferrer');
+        } else {
+            navigate(slide.cta_button_url);
+        }
+    };
+
     return (
         <div
             className={`absolute inset-0 transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -43,7 +54,9 @@ export default function CarouselSlide({ slide, isActive }: Props) {
                         >
                             {renderTextWithLineBreaks(slide.headtext)}
                         </p>
-                        <button className="group flex items-center gap-2 px-6 py-2 hover:bg-white hover:text-gray-900 transition-all rounded-full"
+                        <button
+                            onClick={handleCta}
+                            className="group flex items-center gap-2 px-6 py-2 hover:bg-white hover:text-gray-900 transition-all rounded-full"
                             style={{
                                 color: slide.cta_button_text_color,
                                 backgroundColor: slide.cta_button_color
