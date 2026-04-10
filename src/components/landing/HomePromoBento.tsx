@@ -5,13 +5,13 @@ import { NavLink } from "react-router-dom";
 
 export default function HomePromoBento() {
     return (
-        <section className="px-4">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2">
+        <section className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2">
 
                 {bentoItems.map((item) => (
                     <div
                         key={item.id}
-                        className={`relative overflow-hidden group h-[422px] ${item.size === "large"
+                        className={`relative overflow-hidden group ${item.size === "large"
                             ? "md:col-span-2"
                             : ""
                             }`}

@@ -27,7 +27,7 @@ export default function HeroSection() {
 
 
     return (
-        <div className="relative h-[720px] w-full max-w-7xl mx-auto overflow-hidden">
+        <div className="relative h-screen left-1/2 -translate-x-1/2 overflow-hidden">
             {heroBanners.map((slide, index) => (
                 <CarouselSlide key={slide.id} slide={slide} isActive={index === currentSlide} />
             ))}

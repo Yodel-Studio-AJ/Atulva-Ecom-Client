@@ -18,11 +18,11 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 font-poppins">
-            <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-8xl font-poppins">
+            <div className="bg-white backdrop-blur-md border border-gray-500/10 shadow-lg rounded-2xl px-10 flex items-center justify-between">
                 {/* Logo */}
-                <Link to="/" className="text-xl font-bold tracking-tight text-gray-900">
-                    Altuva
+                <Link to="/" className="flex items-center">
+                    <img src="/images/logo.png" alt="Altuva" className="h-20 object-contain" />
                 </Link>
 
                 {/* Nav links */}

@@ -10,7 +10,7 @@ export default function BestSellers({ products, isLoading }: BestSellersProps) {
     if (!isLoading && products.length === 0) return null;
 
     return (
-        <section className="py-16 font-poppins mx-auto w-full max-w-7xl">
+        <section className="py-10 font-poppins mx-auto w-full max-w-7xl px-6">
             <h2 className="text-2xl font-semibold text-[#444444] tracking-tight mb-5 font-poppins">
                 Best Sellers
             </h2>

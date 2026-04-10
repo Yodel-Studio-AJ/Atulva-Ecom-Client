@@ -68,7 +68,7 @@ const PopularSection = () => {
                                     >
                                         {/* Products */}
                                         <motion.div
-                                            className="flex gap-10 w-3/5"
+                                            className="flex gap-10 w-7/12"
                                             variants={{
                                                 initial: { x: -120, opacity: 0 },
                                                 animate: { x: 0, opacity: 1 },
@@ -118,7 +118,7 @@ const PopularSection = () => {
 
                                         {/* Text */}
                                         <motion.div
-                                            className="flex flex-col w-2/5 mt-10"
+                                            className="flex flex-col w-5/12 mt-10"
                                             variants={{
                                                 initial: { x: 120, opacity: 0 },
                                                 animate: { x: 0, opacity: 1 },
@@ -127,11 +127,11 @@ const PopularSection = () => {
                                             transition={{ duration: 0.5, ease: "easeInOut" }}
                                         >
                                             <h2 className="font-bold text-5xl whitespace-pre-line">
-                                                {active.title}
+                                                {active.title.replace(/\\n/g, '\n')}
                                             </h2>
                                             {active.subtitle && (
                                                 <p className="text-lg text-neutral-800 mt-2 whitespace-pre-line">
-                                                    {active.subtitle}
+                                                    {active.subtitle.replace(/\\n/g, '\n')}
                                                 </p>
                                             )}
                                             <button

@@ -19,9 +19,9 @@ const features = [
 
 export default function WhyChooseUs() {
     return (
-        <section className="w-full bg-[#f5f5f5] py-12 font-poppins">
+        <section className="w-full py-12 font-poppins">
             <div className="max-w-6xl mx-auto px-4 text-center">
-                <h2 className="text-3xl md:text-4xl mb-10" style={{ fontFamily: "'Just Another Hand', cursive" }}>
+                <h2 className="text-3xl md:text-4xl xl:text-6xl mb-10" style={{ fontFamily: "'Just Another Hand', cursive" }}>
                     Why Thousands Choose Us
                 </h2>
 

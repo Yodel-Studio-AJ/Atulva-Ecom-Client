@@ -26,7 +26,7 @@ export default function CarouselSlide({ slide, isActive }: Props) {
                 }`}
         >
             <div className="absolute inset-0">
-                <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover rounded-xl" />
+                <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover" />
                 {/* <div className="absolute inset-0 bg-black/40" /> */}
             </div>
 

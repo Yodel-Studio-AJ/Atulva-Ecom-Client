@@ -10,6 +10,9 @@ import SpotlightSection from "@/components/landing/SpotlightSection";
 import BestSellers from "@/components/landing/BestSellers";
 import useLandingPageStore from '../stores/landingPageStore';
 import WhyChooseUs from '@/components/landing/WhyChooseUs';
+import ShowcaseTea from '@/components/landing/ShowcaseTea';
+import OrganicHealthBanner from '@/components/landing/OrganicHealthBanner';
+import OurStorySection from '@/components/landing/OurStorySection';
 
 const LandingPage = () => {
     const { fetchHeroBanners, fetchFeaturedProducts, featuredProducts, isFeaturedProductsLoading } = useLandingPageStore();
@@ -24,10 +27,13 @@ const LandingPage = () => {
             {/* <Header /> */}
             <HeroSection />
             <QuickAccessCategories />
+            <BestSellers products={featuredProducts} isLoading={isFeaturedProductsLoading} />
             <WhyChooseUs />
             <HomePromoBento />
-            <BestSellers products={featuredProducts} isLoading={isFeaturedProductsLoading} />
             <PopularSection />
+            <ShowcaseTea />
+            <OrganicHealthBanner />
+            <OurStorySection />
             <SpotlightSection />
             <PressBanner />
             <ClientTestimonialsSection />

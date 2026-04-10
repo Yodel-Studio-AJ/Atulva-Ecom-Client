@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/basic/Navbar';
+import Footer from '../components/basic/Footer';
+import MapSection from '../components/basic/MapSection';
 import useCustomerStore from '../stores/customerStore';
 import useCartStore from '../stores/cartStore';
 
@@ -18,6 +20,8 @@ const ClientLayout = () => {
             <main>
                 <Outlet />
             </main>
+            <MapSection />
+            <Footer />
         </div>
     );
 };
