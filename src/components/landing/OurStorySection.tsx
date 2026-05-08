@@ -4,7 +4,7 @@ export default function OurStorySection() {
     const navigate = useNavigate();
 
     return (
-        <section className="relative w-full overflow-hidden font-poppins">
+        <section className="relative w-full overflow-hidden font-poppins max-w-7xl mx-auto">
             {/* Background image */}
             <img
                 src="/bg/ourstory.png"

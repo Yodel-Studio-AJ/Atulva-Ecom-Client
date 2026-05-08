@@ -56,7 +56,7 @@ export default function ShowcaseTea() {
     });
 
     return (
-        <section className="relative overflow-hidden font-poppins">
+        <section className="relative overflow-hidden font-poppins max-w-7xl mx-auto">
             {/* Mountain bg */}
             <img
                 src="/bg/mountain.png"

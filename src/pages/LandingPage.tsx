@@ -11,7 +11,6 @@ import BestSellers from "@/components/landing/BestSellers";
 import useLandingPageStore from '../stores/landingPageStore';
 import WhyChooseUs from '@/components/landing/WhyChooseUs';
 import ShowcaseTea from '@/components/landing/ShowcaseTea';
-import OrganicHealthBanner from '@/components/landing/OrganicHealthBanner';
 import OurStorySection from '@/components/landing/OurStorySection';
 
 const LandingPage = () => {
@@ -32,7 +31,8 @@ const LandingPage = () => {
             <HomePromoBento />
             <PopularSection />
             <ShowcaseTea />
-            <OrganicHealthBanner />
+            {/* <OrganicHealthBanner /> */}
+            {/* <div className='h-20'></div> */}
             <OurStorySection />
             <SpotlightSection />
             <PressBanner />

@@ -74,10 +74,12 @@ const CheckoutPage = () => {
 
             const res = await initiateOrder(selectedId);
             const { razorpay_order_id, amount, currency, key_id } = res.data;
+            const razorpayKey = key_id || import.meta.env.VITE_RAZORPAY_KEY_ID;
+            if (!razorpayKey) throw new Error('Payment configuration missing. Please contact support.');
 
             await new Promise<void>((resolve, reject) => {
                 const rzp = new window.Razorpay({
-                    key: key_id,
+                    key: razorpayKey,
                     amount: Math.round(amount * 100),
                     currency,
                     name: 'Altuva',
@@ -125,7 +127,7 @@ const CheckoutPage = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8 font-poppins">
+        <div className="max-w-5xl mx-auto px-4 py-8 font-poppins pt-32">
             <button
                 onClick={() => navigate('/cart')}
                 className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-900 mb-6 transition-colors"
