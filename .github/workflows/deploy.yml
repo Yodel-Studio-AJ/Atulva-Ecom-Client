@@ -20,4 +20,4 @@ jobs:
             cd ${{ secrets.PROJECT_DIR }}/altuva-client
             git pull origin main
             cd ${{ secrets.PROJECT_DIR }}
-            docker compose up --build -d client
+            docker compose up --build -d
