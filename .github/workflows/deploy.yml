@@ -1,25 +1,37 @@
-name: Deploy Client
+name: Build & Deploy React App (PROD)
 
 on:
   push:
     branches:
-      - main
+      - main # Only runs when code is pushed to the main branch
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: SSH → pull & rebuild client container
-        uses: appleboy/ssh-action@v1.0.3
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup Node.js 22
+        uses: actions/setup-node@v3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.PROJECT_DIR }}
-            git pull origin main
-            docker stop altuva-client || true
-            docker rm altuva-client || true
-            docker build -f Dockerfile.prebuilt -t altuva-client .
-            docker run -d --name altuva-client -p 5173:80 --restart unless-stopped altuva-client
+          node-version: 22.14 # ✅ Node.js v22
+
+      - name: 📦 Install Dependencies
+        run: npm i
+
+      - name: 🏗️ Build React (PROD Config)
+        run: npm run build
+
+      - name: 🚚 Deploy dist/ to CWP Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ vars.SSH_HOST }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ vars.SSH_KEY }}
+          source: "dist/**"
+          target: "${{ vars.PROJECT_DIR }}"
+          strip_components: 2
+          rm: true # Remove files in target directory before copying
