@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import useCartStore from '../stores/cartStore';
 import useCustomerStore from '../stores/customerStore';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 import { getAddresses } from '../apis/customerApi';
 import { initiateOrder, verifyOrder } from '../apis/orderApi';
 import type { Address } from '../types/customer';
@@ -119,14 +122,19 @@ const CheckoutPage = () => {
 
     if (!cart || cart.items.length === 0) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
-                <p className="text-gray-500 text-sm">Your cart is empty.</p>
-                <Link to="/" className="text-sm text-gray-900 font-medium hover:underline">Continue Shopping</Link>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
+                    <p className="text-gray-500 text-sm">Your cart is empty.</p>
+                    <Link to="/" className="text-sm text-gray-900 font-medium hover:underline">Continue Shopping</Link>
+                </div>
+            </>
         );
     }
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-5xl mx-auto px-4 py-8 font-poppins pt-32">
             <button
                 onClick={() => navigate('/cart')}
@@ -289,6 +297,9 @@ const CheckoutPage = () => {
                 </div>
             </div>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 

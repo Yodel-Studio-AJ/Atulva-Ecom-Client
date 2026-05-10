@@ -5,7 +5,7 @@ import useLandingPageStore from "@/stores/landingPageStore";
 
 export default function HeroSection() {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const { heroBanners, isHeroBannerLoading } = useLandingPageStore();
+    const { heroBanners } = useLandingPageStore();
 
 
     const nextSlide = useCallback(() => {
@@ -19,11 +19,6 @@ export default function HeroSection() {
 
 
 
-    if (isHeroBannerLoading) {
-        return (
-            <div></div>
-        )
-    }
 
 
     return (

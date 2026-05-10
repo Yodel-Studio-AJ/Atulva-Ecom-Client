@@ -3,6 +3,9 @@ import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCustomerStore from '../stores/customerStore';
 import useCartStore from '../stores/cartStore';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -33,6 +36,8 @@ const RegisterPage = () => {
     };
 
     return (
+        <>
+        <Navbar />
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 font-poppins">
             <div className="w-full max-w-md">
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">Create account</h1>
@@ -114,6 +119,9 @@ const RegisterPage = () => {
                 </p>
             </div>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 

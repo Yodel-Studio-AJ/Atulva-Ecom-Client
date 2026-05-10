@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMyOrder } from '../apis/orderApi';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 import type { Order } from '../types/order';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '../types/order';
 
@@ -21,18 +24,24 @@ const OrderConfirmationPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex items-center justify-center font-poppins">
-                <p className="text-gray-400 text-sm">Loading order...</p>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex items-center justify-center font-poppins">
+                    <p className="text-gray-400 text-sm">Loading order...</p>
+                </div>
+            </>
         );
     }
 
     if (!order) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
-                <p className="text-gray-500">Order not found.</p>
-                <Link to="/" className="text-sm text-gray-900 font-medium hover:underline">Go Home</Link>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
+                    <p className="text-gray-500">Order not found.</p>
+                    <Link to="/" className="text-sm text-gray-900 font-medium hover:underline">Go Home</Link>
+                </div>
+            </>
         );
     }
 
@@ -40,6 +49,8 @@ const OrderConfirmationPage = () => {
     const statusLabel = ORDER_STATUS_LABELS[order.status];
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-2xl mx-auto px-4 py-10 font-poppins">
             {/* Success header */}
             <div className="text-center mb-8">
@@ -144,6 +155,9 @@ const OrderConfirmationPage = () => {
                 </Link>
             </div>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 

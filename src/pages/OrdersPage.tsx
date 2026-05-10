@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyOrders } from '../apis/orderApi';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 import type { Order } from '../types/order';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '../types/order';
 
@@ -25,6 +28,8 @@ const OrdersPage = () => {
     const totalPages = Math.ceil(total / LIMIT);
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-3xl mx-auto px-4 py-8 font-poppins">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">My Orders</h1>
 
@@ -99,6 +104,9 @@ const OrdersPage = () => {
                 </div>
             )}
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Navbar from '@/components/basic/Navbar';
+import MapSection from '@/components/basic/MapSection';
+import Footer from '@/components/basic/Footer';
 import { getProductBySlug, getSimilarProducts } from '@/apis/landingPageApi';
 import type { Product } from '@/types/landing';
 import BestSellerProductCard from '@/components/landing/BestSellerProductCard';
@@ -40,18 +43,24 @@ export default function ProductDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center font-poppins">
-                <div className="w-10 h-10 border-2 border-black border-t-transparent rounded-full animate-spin" />
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center font-poppins">
+                    <div className="w-10 h-10 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                </div>
+            </>
         );
     }
 
     if (!product) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center font-poppins gap-4">
-                <p className="text-xl font-medium text-gray-500">Product not found</p>
-                <button onClick={() => navigate('/')} className="underline text-sm text-black">Back to home</button>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-screen flex flex-col items-center justify-center font-poppins gap-4">
+                    <p className="text-xl font-medium text-gray-500">Product not found</p>
+                    <button onClick={() => navigate('/')} className="underline text-sm text-black">Back to home</button>
+                </div>
+            </>
         );
     }
 
@@ -80,6 +89,8 @@ export default function ProductDetailPage() {
     const inStock = (product.stock ?? 1) > 0;
 
     return (
+        <>
+        <Navbar />
         <div className="min-h-screen bg-white font-poppins">
             {showLoginModal && (
                 <LoginPromptModal
@@ -308,5 +319,8 @@ export default function ProductDetailPage() {
                 )}
             </div>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 }

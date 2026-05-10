@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCustomerStore from '../stores/customerStore';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 import { getAddresses, addAddress, updateAddress, deleteAddress, setDefaultAddress } from '../apis/customerApi';
 import type { Address } from '../types/customer';
 
@@ -106,6 +109,8 @@ const ProfilePage = () => {
     if (!customer) return null;
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-3xl mx-auto px-4 py-8 font-poppins">
             <h1 className="text-2xl font-bold text-gray-900 mb-8">My Profile</h1>
 
@@ -260,6 +265,9 @@ const ProfilePage = () => {
                 )}
             </section>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 

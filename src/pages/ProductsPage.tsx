@@ -1,5 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import Navbar from '@/components/basic/Navbar';
+import MapSection from '@/components/basic/MapSection';
+import Footer from '@/components/basic/Footer';
 import { getProducts } from '@/apis/landingPageApi';
 import type { Product } from '@/types/landing';
 import type { ProductQueryParams } from '@/apis/landingPageApi';
@@ -102,6 +105,8 @@ export default function ProductsPage() {
     const hasActiveFilters = categoryQ || minPriceQ || maxPriceQ;
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-poppins">
 
             {/* ── Top bar ── */}
@@ -298,5 +303,8 @@ export default function ProductsPage() {
                 </div>
             )}
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 }

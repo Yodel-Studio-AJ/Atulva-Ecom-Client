@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH → pull & restart client container
+      - name: SSH → pull & rebuild client container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -19,4 +19,7 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git pull origin main
-            docker compose up --build -d
+            docker stop altuva-client || true
+            docker rm altuva-client || true
+            docker build -f Dockerfile.prebuilt -t altuva-client .
+            docker run -d --name altuva-client -p 5173:80 --restart unless-stopped altuva-client

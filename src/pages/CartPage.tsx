@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCartStore from '../stores/cartStore';
 import useCustomerStore from '../stores/customerStore';
+import Navbar from '../components/basic/Navbar';
+import MapSection from '../components/basic/MapSection';
+import Footer from '../components/basic/Footer';
 
 const CartPage = () => {
     const navigate = useNavigate();
@@ -28,38 +31,49 @@ const CartPage = () => {
 
     if (!customer) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
-                <p className="text-gray-600">Please login to view your cart.</p>
-                <Link to="/login" state={{ from: { pathname: '/cart' } }} className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium">
-                    Sign In
-                </Link>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
+                    <p className="text-gray-600">Please login to view your cart.</p>
+                    <Link to="/login" state={{ from: { pathname: '/cart' } }} className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                        Sign In
+                    </Link>
+                </div>
+            </>
         );
     }
 
     if (isLoading && !cart) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex items-center justify-center font-poppins">
-                <p className="text-gray-500 text-sm">Loading cart...</p>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex items-center justify-center font-poppins">
+                    <p className="text-gray-500 text-sm">Loading cart...</p>
+                </div>
+            </>
         );
     }
 
     if (!cart || cart.items.length === 0) {
         return (
-            <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <p className="text-gray-500 text-sm">Your cart is empty</p>
-                <Link to="/" className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium">
-                    Continue Shopping
-                </Link>
-            </div>
+            <>
+                <Navbar />
+                <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-4 font-poppins">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <p className="text-gray-500 text-sm">Your cart is empty</p>
+                    <Link to="/" className="bg-gray-900 text-white px-6 py-2 rounded-lg text-sm font-medium">
+                        Continue Shopping
+                    </Link>
+                </div>
+            </>
         );
     }
 
     return (
+        <>
+        <Navbar />
         <div className="max-w-6xl mx-auto px-4 py-8 font-poppins">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-gray-900">My Cart</h1>
@@ -222,6 +236,9 @@ const CartPage = () => {
                 </div>
             </div>
         </div>
+        <MapSection />
+        <Footer />
+        </>
     );
 };
 
