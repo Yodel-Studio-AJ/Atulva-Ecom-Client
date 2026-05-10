@@ -27,11 +27,11 @@ jobs:
       - name: 🚚 Deploy dist/ to CWP Server
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ vars.SSH_HOST }}
-          port: ${{ vars.SSH_PORT }}
-          username: ${{ vars.SSH_USER }}
-          key: ${{ vars.SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           source: "dist/**"
-          target: "${{ vars.PROJECT_DIR }}"
+          target: "${{ secrets.PROJECT_DIR }}"
           strip_components: 2
           rm: true # Remove files in target directory before copying
